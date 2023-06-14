@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>기억력 게임</title>
+    <style>
+      .container {
+        display: flex;
+      }
+
+      .game {
+        width: 70%;
+        font-size: 40px;
+        text-align: center;
+      }
+
+      .game td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        width: 100px;
+        height: 100px;
+        vertical-align: center;
+      }
+
+      .game td:hover {
+        background-color: #f2f2f2;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>기억력게임</h1>
+    <div class="container">
+      <table class="game">
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="countdown-display"></div>
+  </body>
+  <script>
+    window.name = "score";
+    var count = 1;
+    var num = []; 
+    var tg_num = []; 
+    var stage = 1;
+    var tg = document.querySelectorAll("td"); 
+    var score = 0;
+    var countdown;
+
+    function getNum() {
+      for (i = 0; i < stage; i++) {
+        num[i] = Math.floor(Math.random() * 9); 
+        tg_num[i] = i + 1;
+
+        for (j = 0; j < i; j++) {
+          if (num[i] == num[j]) {
+            i--; 
+          }
+        }
+      }
+    }
+
+    function nextStage() {
+      alert("클리어"); 
+      stage = stage + 1;
+      score += stage;
+      gamestart(); 
+    }
+
+    function insertNum() {
+      tg.forEach((number) => {
+        number.textContent = ""; 
+      });
+      for (i = 0; i < tg.length; i++) {
+        for (j = 0; j < num.length; j++) {
+          if (num[j] == i) {
+            tg[i].textContent = tg_num[j]; 
+          }
+        }
+      }
+    }
+
+    function hidenum() {
+      for (i = 0; i < tg.length; i++) {
+        for (j = 0; j < num.length; j++) {
+          if (num[j] == i) {
+            tg[i].textContent = ""; 
+          }
+        }
+      }
+    }
+
+
+    function startCountdown() { 
+        if (clickable === true) {
+          var seconds = 10; 
+          countdown = setInterval(function () {
+            document.getElementById("countdown-display").textContent =
+              seconds + "초 남았습니다."; 
+            if (seconds === 0) {
+              clearInterval(countdown); 
+              alert("시간 초과!"); 
+            }
+            seconds--;
+          }, 1000); 
+        } else {
+          alert ('아직 클릭할 시간이 아닙니다');
+        }
+      }
+
+    function gamestart() {
+      clickable = false;
+      count = 1;
+      score += 1;
+      getNum(); 
+      insertNum(); 
+      clearTimeout();
+      clearTimeout(countdown);
+      setTimeout(function () {
+        hidenum();
+        clickable = true;
+        startCountdown();
+        AllAddEvent();
+      }, 5000);   
+    }
+    gamestart(); 
+
+    function AllAddEvent() {
+    for (var i = 0; i < tg.length; i++) {
+      (function (index) {
+        tg[index].addEventListener("click", function () {
+          for (j = count - 1; j < num.length; j++) {
+            if (num[j] == index && count == tg_num[j]) {
+              if (count == stage) {
+                nextStage();
+              } else {
+                count++;
+                break;
+              }
+            } else {
+              location.href = "easy_F.html";
+              alert(`최종 스코어 ${stage}라운드 ${score}점 입니다 `);
+            }
+          }
+        });
+      })(i);
+    }
+  }
+  </script>
+</html>
